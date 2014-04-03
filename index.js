@@ -11,7 +11,7 @@ function NumberType(opts) {
   this.opts = opts;
 }
 
-NumberType.prototype.ratify = function (val) {
+NumberType.prototype.marshal = function (val) {
   if (typeof val !== 'number')
    throw new Error('Expected a Number ' + JSON.stringify(val));
 
@@ -22,7 +22,7 @@ function StringType(opts) {
   this.opts = opts;
 }
 
-StringType.prototype.ratify = function (val) {
+StringType.prototype.marshal = function (val) {
   if (typeof val !== 'string')
     throw new Error('Expected a String ' + JSON.stringify(val));
 
@@ -33,7 +33,7 @@ function ArrayType(type) {
   this.type = type;
 }
 
-ArrayType.prototype.ratify = function (val) {
+ArrayType.prototype.marshal = function (val) {
   if (! Array.isArray(val))
     throw new Error('Expected Array ' + JSON.stringify(val));
 
@@ -41,7 +41,7 @@ ArrayType.prototype.ratify = function (val) {
   var out = [];
 
   val.forEach(function (item) {
-    out.push(type.ratify(item));
+    out.push(type.marshal(item));
   });
 
   return out;
@@ -51,14 +51,14 @@ function MapType(type) {
   this.type = type;
 }
 
-MapType.prototype.ratify = function (val) {
+MapType.prototype.marshal = function (val) {
   var type  = this.type;
 
   if (typeof val !== 'object') throw new Error();
 
   var out = {};
   Object.keys(val).forEach(function (key) {
-    out[key] = type.ratify(val[key]);
+    out[key] = type.marshal(val[key]);
   });
 
   return out;
@@ -81,16 +81,16 @@ ClassType.prototype.addOptional = function (key, type) {
   return this;
 };
 
-ClassType.prototype.ratify = function (val) {
+ClassType.prototype.marshal = function (val) {
   var out = {};
   Object.keys(this.required).forEach(function (key) {
-    out[key] = this.required[key].ratify(val[key]);
+    out[key] = this.required[key].marshal(val[key]);
   }, this);
 
   Object.keys(this.optional).forEach(function (key) {
     if (val[key] === undefined) return;
 
-    out[key] = this.optional[key].ratify(val[key]);
+    out[key] = this.optional[key].marshal(val[key]);
   }, this);
 
   return out;
