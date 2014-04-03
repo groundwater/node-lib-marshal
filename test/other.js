@@ -4,7 +4,7 @@ var test = require('tap').test;
 var NumberType = proto.NumberType;
 var StringType = proto.StringType;
 var MapType    = proto.MapType;
-var ClassType  = proto.ClassType;
+var StructType = proto.StructType;
 var ArrayType  = proto.ArrayType;
 
 //-----
@@ -54,7 +54,7 @@ function Man(m){
 }
 
 test(function (t) {
-  type = new ClassType(Man);
+  type = new StructType(Man);
   type.addRequired('name', new StringType)
   t.deepEqual(type.marshal(new Man('hi')), {'name': 'hi'})
   t.throws(function () {
@@ -69,7 +69,7 @@ test(function (t) {
 });
 
 test(function (t) {
-  type = new MapType(new ClassType(Man).addRequired('name', new StringType))
+  type = new MapType(new StructType(Man).addRequired('name', new StringType))
   t.deepEqual(
     type.marshal({'as': new Man('hi')}),
     {as: {name: 'hi'}}

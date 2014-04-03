@@ -4,7 +4,7 @@ module.exports = {
   StringType : StringType,
   ArrayType  : ArrayType,
   MapType    : MapType,
-  ClassType  : ClassType,
+  StructType : StructType,
 };
 
 function NumberType(opts) {
@@ -64,24 +64,24 @@ MapType.prototype.marshal = function (val) {
   return out;
 };
 
-function ClassType() {
+function StructType() {
   this.required = {};
   this.optional = {};
 }
 
-ClassType.prototype.addRequired = function (key, type) {
+StructType.prototype.addRequired = function (key, type) {
   this.required[key] = type;
 
   return this;
 };
 
-ClassType.prototype.addOptional = function (key, type) {
+StructType.prototype.addOptional = function (key, type) {
   this.optional[key] = type;
 
   return this;
 };
 
-ClassType.prototype.marshal = function (val) {
+StructType.prototype.marshal = function (val) {
   var out = {};
   Object.keys(this.required).forEach(function (key) {
     out[key] = this.required[key].marshal(val[key]);

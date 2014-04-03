@@ -25,7 +25,7 @@ function Message() {
 
 // define some types
 var stringProto  = new proto.StringType;
-var messageProto = new proto.ClassType(Message);
+var messageProto = new proto.StructType;
 messageProto.addRequired('from', stringProto);
 messageProto.addRequired('dest', stringProto);
 messageProto.addOptional('body', stringProto);

@@ -4,7 +4,7 @@ var test = require('tap').test;
 var NumberType = proto.NumberType;
 var StringType = proto.StringType;
 var MapType    = proto.MapType;
-var ClassType  = proto.ClassType;
+var StructType  = proto.StructType;
 var ArrayType  = proto.ArrayType;
 
 //-----
