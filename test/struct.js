@@ -6,6 +6,32 @@ var StructType = proto.StructType;
 //-----
 var type;
 
+test("type generation", function (t) {
+  function A() {}
+  var a = new StructType(A);
+
+  t.ok(a.marshal(new A) instanceof A);
+  t.ok(a.marshal({}) instanceof A);
+  t.end();
+});
+
+test("type generation accepts other types", function (t) {
+  function A() {}
+  function B() {}
+  var a = new StructType(A);
+
+  t.ok(a.marshal(new B) instanceof A);
+  t.end();
+});
+
+test("error to create non-function struct", function (t) {
+  t.throws(function(){
+    new StructType({});
+  })
+
+  t.end();
+});
+
 test("comprehensive", function (t) {
   var car = new StructType;
   var man = new StructType;

@@ -64,7 +64,12 @@ MapType.prototype.marshal = function (val) {
   return out;
 };
 
-function StructType(opts) {
+function StructType(type, opts) {
+  this.type     = type || Object;
+
+  if (typeof this.type !== 'function')
+    throw new Error('must pass a function type or none');
+
   this.required = {};
   this.optional = {};
   this.strict   = opts ? !!opts.strict : false;
@@ -89,7 +94,7 @@ StructType.prototype.marshal = function (val) {
 
   var isStrict = this.strict;
 
-  var out = {};
+  var out = new this.type();
   Object.keys(this.required).forEach(function (key) {
     out[key] = this.required[key].marshal(val[key]);
   }, this);

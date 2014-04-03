@@ -12,6 +12,8 @@ npm install --save lib-stream-protocol
 
 ## Usage
 
+### send data to a client
+
 ```javascript
 var proto = require('lib-stream-protocol');
 
@@ -21,6 +23,7 @@ function Message() {
   this.dest    = '';
   this.body    = '';
   this.subject = '';
+  this._some_internal_property = null;
 }
 
 // define some types
@@ -37,6 +40,32 @@ m.from = 'bob';
 m.dest = 'kim';
 m.body = 'hello world';
 
-// stream it to the world!
-messageProto.stream(m).pipe(http.request(opts, response));
+// ready it for the world
+JSON.stringify(messageProto.marshal(m))
+```
+
+### parse incoming data
+
+```javascript
+var proto = require('lib-stream-protocol');
+
+// create your data type
+function Message() {
+  this.from    = '';
+  this.dest    = '';
+  this.body    = '';
+  this.subject = '';
+  this._some_internal_property = null;
+}
+
+// define some types
+var stringProto  = new proto.StringType;
+var messageProto = new proto.StructType;
+messageProto.addRequired('from', stringProto);
+messageProto.addRequired('dest', stringProto);
+messageProto.addOptional('body', stringProto);
+messageProto.addOptional('subject', stringProto);
+
+// message will either be correct, or throw an error
+var message = messageProto.marshal(JSON.parse(str))
 ```

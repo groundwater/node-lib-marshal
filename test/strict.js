@@ -7,7 +7,7 @@ var StructType = proto.StructType;
 var type;
 
 test("strict mode", function (t) {
-  var type = new StructType({strict: true});
+  var type = new StructType(null, {strict: true});
 
   type.addRequired('a', new proto.StringType);
 
