@@ -1,3 +1,5 @@
+var util = require('util');
+
 /* jshint latedef: false */
 module.exports = {
   NumberType : NumberType,
@@ -12,7 +14,8 @@ function NumberType(opts) {
 }
 
 NumberType.prototype.parse = function (val) {
-  if (typeof val !== 'number') throw new Error();
+  if (typeof val !== 'number')
+   throw new Error('Expected a Number ' + JSON.stringify(val));
 
   return val;
 };
@@ -22,7 +25,8 @@ function StringType(opts) {
 }
 
 StringType.prototype.parse = function (val) {
-  if (typeof val !== 'string') throw new Error();
+  if (typeof val !== 'string')
+    throw new Error('Expected a String ' + JSON.stringify(val));
 
   return val;
 };
@@ -32,7 +36,8 @@ function ArrayType(type) {
 }
 
 ArrayType.prototype.parse = function (val) {
-  if (! Array.isArray(val)) throw new Error();
+  if (! Array.isArray(val))
+    throw new Error('Expected Array ' + JSON.stringify(val));
 
   var type = this.type;
   var out = [];
