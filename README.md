@@ -2,6 +2,8 @@
 
 > create and parse object streams from a single definition
 
+[![Build Status](https://travis-ci.org/groundwater/node-lib-stream-protocol.svg?branch=master)](https://travis-ci.org/groundwater/node-lib-stream-protocol)
+
 ## Install
 
 ```bash
