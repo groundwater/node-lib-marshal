@@ -1,7 +1,7 @@
 {
   "name": "lib-stream-protocol",
   "version": "0.0.0",
-  "description": "",
+  "description": "> create and parse object streams from a single definition",
   "main": "a.js",
   "directories": {
     "test": "test"
@@ -14,5 +14,13 @@
   "devDependencies": {
     "tap": "^0.4.8",
     "jshint": "^2.5.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/groundwater/node-lib-stream-protocol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/groundwater/node-lib-stream-protocol/issues"
+  },
+  "homepage": "https://github.com/groundwater/node-lib-stream-protocol"
 }
