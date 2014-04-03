@@ -12,12 +12,16 @@ module.exports = {
 };
 
 function NumberType(opts) {
-  this.opts = opts;
+  this.opts = opts || {};
 }
 
 NumberType.prototype.marshal = function (val) {
   if (typeof val !== 'number')
    throw new Error('Expected a Number ' + JSON.stringify(val));
+
+  var opts = this.opts;
+  if (opts.min !== undefined) assert(opts.min <= val);
+  if (opts.max !== undefined) assert(opts.max >= val);
 
   return val;
 };
