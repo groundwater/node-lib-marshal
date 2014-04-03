@@ -82,6 +82,10 @@ StructType.prototype.addOptional = function (key, type) {
 };
 
 StructType.prototype.marshal = function (val) {
+  if (typeof val !== 'object') throw new Error('expected struct object');
+  if (val === null)            throw new Error('struct cannot be null');
+  if (Array.isArray(val))      throw new Error('struct cannot be an array');
+
   var out = {};
   Object.keys(this.required).forEach(function (key) {
     out[key] = this.required[key].marshal(val[key]);
