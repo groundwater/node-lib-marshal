@@ -1,5 +1,7 @@
 'use strict';
 
+var assert = require('assert');
+
 /* jshint latedef: false */
 module.exports = {
   NumberType : NumberType,
@@ -21,12 +23,18 @@ NumberType.prototype.marshal = function (val) {
 };
 
 function StringType(opts) {
-  this.opts = opts;
+  this.opts = opts || {};
 }
 
 StringType.prototype.marshal = function (val) {
   if (typeof val !== 'string')
     throw new Error('Expected a String ' + JSON.stringify(val));
+
+  var opts = this.opts;
+  if (opts.min) assert(val.length >= this.opts.min);
+  if (opts.max) assert(val.length <= this.opts.max);
+  if (opts.match) assert(val.match(this.opts.match));
+  if (opts.valid) assert(opts.valid(val));
 
   return val;
 };
