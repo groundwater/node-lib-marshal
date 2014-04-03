@@ -1,3 +1,5 @@
+'use strict';
+
 /* jshint latedef: false */
 module.exports = {
   NumberType : NumberType,
