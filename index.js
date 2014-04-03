@@ -64,9 +64,10 @@ MapType.prototype.marshal = function (val) {
   return out;
 };
 
-function StructType() {
+function StructType(opts) {
   this.required = {};
   this.optional = {};
+  this.strict   = opts ? !!opts.strict : false;
 }
 
 StructType.prototype.addRequired = function (key, type) {
@@ -86,6 +87,8 @@ StructType.prototype.marshal = function (val) {
   if (val === null)            throw new Error('struct cannot be null');
   if (Array.isArray(val))      throw new Error('struct cannot be an array');
 
+  var isStrict = this.strict;
+
   var out = {};
   Object.keys(this.required).forEach(function (key) {
     out[key] = this.required[key].marshal(val[key]);
@@ -96,6 +99,11 @@ StructType.prototype.marshal = function (val) {
 
     out[key] = this.optional[key].marshal(val[key]);
   }, this);
+
+  if(isStrict) {
+    if (Object.keys(out).length !== Object.keys(val).length)
+      throw new Error('strict mode does not allow extra properties');
+  }
 
   return out;
 };
