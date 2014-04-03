@@ -12,7 +12,7 @@ npm install --save lib-stream-protocol
 
 ## Usage
 
-### send data to a client
+### define your types
 
 ```javascript
 var proto = require('lib-stream-protocol');
@@ -28,12 +28,17 @@ function Message() {
 
 // define some types
 var stringProto  = new proto.StringType;
-var messageProto = new proto.StructType;
-messageProto.addRequired('from', stringProto);
-messageProto.addRequired('dest', stringProto);
-messageProto.addOptional('body', stringProto);
-messageProto.addOptional('subject', stringProto);
+var messageProto = new proto.StructType(Message);
 
+messageProto.addRequired('from'   , stringProto);
+messageProto.addRequired('dest'   , stringProto);
+messageProto.addOptional('body'   , stringProto);
+messageProto.addOptional('subject', stringProto);
+```
+
+### prepare data for the client
+
+```javascript
 // create a data object
 var m = new Message();
 m.from = 'bob';
@@ -47,25 +52,6 @@ JSON.stringify(messageProto.marshal(m))
 ### parse incoming data
 
 ```javascript
-var proto = require('lib-stream-protocol');
-
-// create your data type
-function Message() {
-  this.from    = '';
-  this.dest    = '';
-  this.body    = '';
-  this.subject = '';
-  this._some_internal_property = null;
-}
-
-// define some types
-var stringProto  = new proto.StringType;
-var messageProto = new proto.StructType;
-messageProto.addRequired('from', stringProto);
-messageProto.addRequired('dest', stringProto);
-messageProto.addOptional('body', stringProto);
-messageProto.addOptional('subject', stringProto);
-
-// message will either be correct, or throw an error
+// message will either be a correct Message object, or throw an error
 var message = messageProto.marshal(JSON.parse(str))
 ```
