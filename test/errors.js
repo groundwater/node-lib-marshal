@@ -13,7 +13,7 @@ var type;
 test("number type pasring a string", function (t) {
   type = new NumberType();
   t.throws(function () {
-    type.parse('asdf');
+    type.ratify('asdf');
   }, new Error('Expected a Number "asdf"'), 'throws exception');
   t.end();
 });
@@ -21,7 +21,7 @@ test("number type pasring a string", function (t) {
 test("string type pasring a number", function (t) {
   type = new StringType();
   t.throws(function () {
-    type.parse(1234);
+    type.ratify(1234);
   }, new Error('Expected a String 1234'), 'throws exception');
   t.end();
 });
@@ -29,7 +29,7 @@ test("string type pasring a number", function (t) {
 test("array[string] type pasring a string", function (t) {
   type = new ArrayType(new StringType);
   t.throws(function () {
-    type.parse('hello');
+    type.ratify('hello');
   }, new Error('Expected Array "hello"'), 'throws exception');
   t.end();
 });
