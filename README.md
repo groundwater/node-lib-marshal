@@ -17,45 +17,42 @@ npm install --save lib-marshal
 ```javascript
 var marshal = require('lib-marshal');
 
-// create your data type
-function Message() {
-  this.from    = '';
-  this.dest    = '';
-  this.body    = '';
-  this.subject = '';
-  this._some_internal_property = null;
-}
-
 // define some types
 var stringProto  = new marshal.StringType;
-var messageProto = new marshal.StructType(Message);
+var messageProto = new marshal.StructType;
 
-messageProto.addRequired('from'   , stringProto);
-messageProto.addRequired('dest'   , stringProto);
+messageProto.add('from'   , stringProto);
+messageProto.add('dest'   , stringProto);
 messageProto.add('body'   , stringProto);
 messageProto.add('subject', stringProto);
 ```
 
 ### prepare data for the client
 
+Prepare data for the client,
+by stripping out unused properties and validating data types.
+
 ```javascript
 // create a data object
-var m = new Message();
-m.from = 'bob';
-m.dest = 'kim';
-m.body = 'hello world';
+var m = {
+  from: 'bob',
+  dest: 'kim',
+  body: 'hello world'
+};
 
-// ready it for the world
+// ready it for the world, or die trying
 JSON.stringify(messageProto.marshal(m))
 ```
 
 ### parse incoming data
 
+Validate an incoming object, or throw an error.
+
 ```javascript
-// message will either be a correct Message object, or throw an error
 var message = messageProto.marshal(JSON.parse(str))
 ```
 
 ## see also
 
 - [lib-schema](https://www.npmjs.org/package/lib-schema)
+  generate a marshaller from a json schema
