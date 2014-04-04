@@ -55,3 +55,7 @@ JSON.stringify(messageProto.marshal(m))
 // message will either be a correct Message object, or throw an error
 var message = messageProto.marshal(JSON.parse(str))
 ```
+
+## see also
+
+- [lib-schema](https://www.npmjs.org/package/lib-schema)
