@@ -32,8 +32,8 @@ var messageProto = new marshal.StructType(Message);
 
 messageProto.addRequired('from'   , stringProto);
 messageProto.addRequired('dest'   , stringProto);
-messageProto.addOptional('body'   , stringProto);
-messageProto.addOptional('subject', stringProto);
+messageProto.add('body'   , stringProto);
+messageProto.add('subject', stringProto);
 ```
 
 ### prepare data for the client

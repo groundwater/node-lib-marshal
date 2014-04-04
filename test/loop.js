@@ -14,7 +14,7 @@ test("throw when detecting an object cycle", function (t) {
   a.a = a;
 
   var aType = new StructType(A);
-  aType.addOptional('a', aType);
+  aType.add('a', aType);
 
   t.throws(function () {
     aType.marshal(a)

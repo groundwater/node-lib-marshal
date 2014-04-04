@@ -37,12 +37,12 @@ test("comprehensive", function (t) {
   var man = new StructType;
 
   man.addRequired('name', new proto.StringType);
-  man.addOptional('age', new proto.NumberType);
+  man.add('age', new proto.NumberType);
 
   car.addRequired('type', new proto.StringType);
   car.addRequired('miles', new proto.NumberType);
   car.addRequired('driver', man);
-  car.addOptional('passengers', new proto.ArrayType(man));
+  car.add('passengers', new proto.ArrayType(man));
 
   t.throws(function(){
     car.marshal({})
@@ -98,14 +98,14 @@ test("required string missing", function (t) {
 
 test("optional string", function (t) {
   type = new StructType;
-  type.addOptional('a', new proto.StringType);
+  type.add('a', new proto.StringType);
   t.deepEqual(type.marshal({a: ''}), {a: ''}, 'marshals');
   t.end();
 });
 
 test("optional string missing", function (t) {
   type = new StructType;
-  type.addOptional('a', new proto.StringType);
+  type.add('a', new proto.StringType);
   t.deepEqual(type.marshal({}), {}, 'marshals');
   t.end();
 });

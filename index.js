@@ -95,7 +95,7 @@ StructType.prototype.addRequired = function (key, type) {
   return this;
 };
 
-StructType.prototype.addOptional = function (key, type) {
+StructType.prototype.add = function (key, type) {
   this.optional[key] = type;
 
   return this;

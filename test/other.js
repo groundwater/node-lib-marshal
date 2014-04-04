@@ -60,7 +60,7 @@ test(function (t) {
   t.throws(function () {
     type.marshal(new Man())
   })
-  type.addOptional('age', new StringType)
+  type.add('age', new StringType)
   var m = new Man('hi')
   t.deepEqual(type.marshal(m), {name: 'hi'})
   m.age = 'asdf'
