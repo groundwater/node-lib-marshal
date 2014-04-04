@@ -1,7 +1,7 @@
 {
-  "name": "lib-stream-protocol",
+  "name": "lib-marshal",
   "version": "0.2.0",
-  "description": "> create and parse object streams from a single definition",
+  "description": "marshalled object validation",
   "main": "a.js",
   "directories": {
     "test": "test"
@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/groundwater/node-lib-stream-protocol.git"
+    "url": "git://github.com/groundwater/node-lib-marshal.git"
   },
   "bugs": {
-    "url": "https://github.com/groundwater/node-lib-stream-protocol/issues"
+    "url": "https://github.com/groundwater/node-lib-marshal/issues"
   },
-  "homepage": "https://github.com/groundwater/node-lib-stream-protocol"
+  "homepage": "https://github.com/groundwater/node-lib-marshal"
 }

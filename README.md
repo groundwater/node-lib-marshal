@@ -1,13 +1,13 @@
-# lib-stream-protocol
+# lib-marshal
 
-> create and parse object streams from a single definition
+> marshalled object validation
 
-[![Build Status](https://travis-ci.org/groundwater/node-lib-stream-protocol.svg?branch=master)](https://travis-ci.org/groundwater/node-lib-stream-protocol)
+[![Build Status](https://travis-ci.org/groundwater/node-lib-marshal.svg?branch=master)](https://travis-ci.org/groundwater/node-lib-marshal)
 
 ## Install
 
 ```bash
-npm install --save lib-stream-protocol
+npm install --save lib-marshal
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ npm install --save lib-stream-protocol
 ### define your types
 
 ```javascript
-var proto = require('lib-stream-protocol');
+var marshal = require('lib-marshal');
 
 // create your data type
 function Message() {
@@ -27,8 +27,8 @@ function Message() {
 }
 
 // define some types
-var stringProto  = new proto.StringType;
-var messageProto = new proto.StructType(Message);
+var stringProto  = new marshal.StringType;
+var messageProto = new marshal.StructType(Message);
 
 messageProto.addRequired('from'   , stringProto);
 messageProto.addRequired('dest'   , stringProto);
