@@ -101,22 +101,27 @@ StructType.prototype.addOptional = function (key, type) {
   return this;
 };
 
-StructType.prototype.marshal = function (val) {
+StructType.prototype.marshal = function (val, stack) {
   if (typeof val !== 'object') throw new Error('expected struct object');
   if (val === null)            throw new Error('struct cannot be null');
   if (Array.isArray(val))      throw new Error('struct cannot be an array');
+
+  // cannot marshal recursive objects
+  if (!stack) stack = [];
+  if (stack.indexOf(val) > -1) throw new Error('Cyclic Error');
+  stack.push(val);
 
   var isStrict = this.strict;
 
   var out = new this.type();
   Object.keys(this.required).forEach(function (key) {
-    out[key] = this.required[key].marshal(val[key]);
+    out[key] = this.required[key].marshal(val[key], stack);
   }, this);
 
   Object.keys(this.optional).forEach(function (key) {
     if (val[key] === undefined) return;
 
-    out[key] = this.optional[key].marshal(val[key]);
+    out[key] = this.optional[key].marshal(val[key], stack);
   }, this);
 
   if(isStrict) {
