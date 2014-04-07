@@ -9,6 +9,17 @@ module.exports = {
   ArrayType  : ArrayType,
   MapType    : MapType,
   StructType : StructType,
+  Nullable   : Nullable
+};
+
+function Nullable(type) {
+  assert.equal(typeof type.marshal, 'function', 'Type Requires .marshal Method');
+  this.type = type;
+}
+
+Nullable.prototype.marshal = function (val) {
+  if (val === null) return null;
+  else return this.type.marshal(val);
 };
 
 function NumberType(opts) {
