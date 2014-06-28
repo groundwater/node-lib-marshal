@@ -13,7 +13,7 @@ test("number min", function (t) {
   t.equal(type.marshal(0), 0, 'marshals');
   t.throws(function(){
     type.marshal(-1);
-  });
+  }, new Error('Value <-1> must be greater than 0 at <object>'));
   t.end();
 });
 
@@ -24,7 +24,7 @@ test("number max", function (t) {
   t.equal(type.marshal(0), 0, 'marshals');
   t.throws(function(){
     type.marshal(1);
-  });
+  }, new Error('Value <1> must be less than 0 at <object>'));
   t.end();
 });
 
@@ -36,6 +36,6 @@ test("min and max", function (t) {
   t.equal(type.marshal(0.4), 0.4, 'marshals');
   t.throws(function(){
     type.marshal(1.4);
-  });
+  }, new Error('Value <1.4> must be less than 1 at <object>'));
   t.end();
 });

@@ -29,6 +29,21 @@ function MarshalError(expected, received, path) {
   return error;
 }
 
+function ConstraintError(received, constraint, path) {
+  var message = fmt("Value <%s> must be %s at %s",
+    received,
+    constraint,
+    ['<object>'].concat(path).join('.')
+  );
+  var error   = new Error(message);
+
+  error.path       = path;
+  error.received   = received;
+  error.constraint = constraint;
+
+  return error;
+}
+
 function Nullable(type) {
   assert.equal(typeof type.marshal, 'function', 'Type Requires .marshal Method');
   this.type = type;
@@ -52,8 +67,14 @@ NumberType.prototype.marshal = function (val, _, path) {
    throw MarshalError('number', val, path);
 
   var opts = this.opts;
-  if (opts.min !== undefined) assert(opts.min <= val);
-  if (opts.max !== undefined) assert(opts.max >= val);
+
+  // check minimum constraint
+  if (opts.min !== undefined && opts.min > val)
+    throw ConstraintError(val, 'greater than ' + opts.min, path);
+
+  // check maximum constraint
+  if (opts.max !== undefined && opts.max < val)
+    throw ConstraintError(val, 'less than ' + opts.max, path);
 
   return val;
 };
@@ -69,10 +90,18 @@ StringType.prototype.marshal = function (val, _, path) {
     throw MarshalError('String', val, path);
 
   var opts = this.opts;
-  if (opts.min) assert(val.length >= this.opts.min);
-  if (opts.max) assert(val.length <= this.opts.max);
-  if (opts.match) assert(val.match(this.opts.match));
-  if (opts.valid) assert(opts.valid(val));
+
+  if (opts.min && val.length < opts.min)
+    throw ConstraintError(val, 'at least ' + opts.min + ' characters', path);
+
+  if (opts.max && val.length > this.opts.max)
+    throw ConstraintError(val, 'at most ' + opts.max + ' characters', path);
+
+  if (opts.match && !val.match(opts.match))
+    throw ConstraintError(val, 'match the pattern <' + opts.match + '>', path);
+
+  if (opts.valid && !opts.valid(val))
+    throw ConstraintError(val, 'pass validation function <' + (opts.valid.name || 'anonymous') + '>', path);
 
   return val;
 };
@@ -143,8 +172,8 @@ StructType.prototype.marshal = function (val, stack, path) {
   path = path || [];
 
   if (typeof val !== 'object') throw MarshalError('object', val, path);
-  if (val === null)            throw MarshalError('object', null, path);
-  if (Array.isArray(val))      throw MarshalError('object', 'Array', path);
+  if (val === null)            throw MarshalError('object', val, path);
+  if (Array.isArray(val))      throw MarshalError('object', val, path);
 
   // cannot marshal recursive objects
   if (!stack) stack = [];
