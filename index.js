@@ -1,5 +1,6 @@
 'use strict';
 
+var fmt    = require('util').format;
 var assert = require('assert');
 
 /* jshint latedef: false */
@@ -12,23 +13,43 @@ module.exports = {
   Nullable   : Nullable
 };
 
+function MarshalError(expected, received, path) {
+  var message = fmt("Expected <%s> but Received <%s> of type <%s> at %s",
+    expected,
+    received,
+    typeof received,
+    ['<object>'].concat(path).join('.')
+  );
+  var error   = new Error(message);
+
+  error.path     = path;
+  error.expected = expected;
+  error.recieved = received;
+
+  return error;
+}
+
 function Nullable(type) {
   assert.equal(typeof type.marshal, 'function', 'Type Requires .marshal Method');
   this.type = type;
 }
 
-Nullable.prototype.marshal = function (val) {
+Nullable.prototype.marshal = function (val, _, path) {
+  path = path || [];
+
   if (val === null) return null;
-  else return this.type.marshal(val);
+  else return this.type.marshal(val, _, path);
 };
 
 function NumberType(opts) {
   this.opts = opts || {};
 }
 
-NumberType.prototype.marshal = function (val) {
+NumberType.prototype.marshal = function (val, _, path) {
+  path = path || [];
+
   if (typeof val !== 'number')
-   throw new Error('Expected a Number ' + JSON.stringify(val));
+   throw MarshalError('number', val, path);
 
   var opts = this.opts;
   if (opts.min !== undefined) assert(opts.min <= val);
@@ -41,9 +62,11 @@ function StringType(opts) {
   this.opts = opts || {};
 }
 
-StringType.prototype.marshal = function (val) {
+StringType.prototype.marshal = function (val, _, path) {
+  path = path || [];
+
   if (typeof val !== 'string')
-    throw new Error('Expected a String ' + JSON.stringify(val));
+    throw MarshalError('String', val, path);
 
   var opts = this.opts;
   if (opts.min) assert(val.length >= this.opts.min);
@@ -58,9 +81,11 @@ function ArrayType(type) {
   this.type = type;
 }
 
-ArrayType.prototype.marshal = function (val) {
+ArrayType.prototype.marshal = function (val, _, path) {
+  path = path || [];
+
   if (! Array.isArray(val))
-    throw new Error('Expected Array ' + JSON.stringify(val));
+    throw MarshalError('Array', val, path);
 
   var type = this.type;
   var out = [];
@@ -76,14 +101,16 @@ function MapType(type) {
   this.type = type;
 }
 
-MapType.prototype.marshal = function (val) {
+MapType.prototype.marshal = function (val, _, path) {
+  path = path || [];
+
   var type  = this.type;
 
-  if (typeof val !== 'object') throw new Error();
+  if (typeof val !== 'object') throw MarshalError('Map', val, path);
 
   var out = {};
   Object.keys(val).forEach(function (key) {
-    out[key] = type.marshal(val[key]);
+    out[key] = type.marshal(val[key], _, path.concat(key));
   });
 
   return out;
@@ -112,27 +139,29 @@ StructType.prototype.add = function (key, type) {
   return this;
 };
 
-StructType.prototype.marshal = function (val, stack) {
-  if (typeof val !== 'object') throw new Error('expected struct object');
-  if (val === null)            throw new Error('struct cannot be null');
-  if (Array.isArray(val))      throw new Error('struct cannot be an array');
+StructType.prototype.marshal = function (val, stack, path) {
+  path = path || [];
+
+  if (typeof val !== 'object') throw MarshalError('object', val, path);
+  if (val === null)            throw MarshalError('object', null, path);
+  if (Array.isArray(val))      throw MarshalError('object', 'Array', path);
 
   // cannot marshal recursive objects
   if (!stack) stack = [];
-  if (stack.indexOf(val) > -1) throw new Error('Cyclic Error');
+  if (stack.indexOf(val) > -1) throw new Error('Cyclic Error', path);
   stack.push(val);
 
   var isStrict = this.strict;
 
   var out = new this.type();
   Object.keys(this.required).forEach(function (key) {
-    out[key] = this.required[key].marshal(val[key], stack);
+    out[key] = this.required[key].marshal(val[key], stack, path.concat(key));
   }, this);
 
   Object.keys(this.optional).forEach(function (key) {
     if (val[key] === undefined) return;
 
-    out[key] = this.optional[key].marshal(val[key], stack);
+    out[key] = this.optional[key].marshal(val[key], stack, path.concat(key));
   }, this);
 
   if(isStrict) {

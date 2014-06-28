@@ -7,13 +7,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jshint index.js && tap test"
+    "test": "tap test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "tap": "^0.4.8",
-    "jshint": "^2.5.0"
+    "tap": "^0.4.8"
   },
   "repository": {
     "type": "git",

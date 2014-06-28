@@ -52,6 +52,49 @@ Validate an incoming object, or throw an error.
 var message = messageProto.marshal(JSON.parse(str))
 ```
 
+## errors
+
+Handy dandy error messages
+
+```js
+var message = new StructType;
+var address = new StructType;
+var content = new StructType;
+
+content.add('subject', new StringType)
+content.add('body', new StringType)
+content.add('author', address)
+
+address.add('name', new StringType)
+address.add('email', new StringType)
+
+message.add('from', address)
+message.add('to', address)
+message.add('content', content)
+
+message.marshal({
+  to: {
+    name    : "Kim",
+    email   : "kim@outer.space"
+  },
+  from      : {
+    name    : "Bob",
+    email   : "bob@outer.space"
+  },
+  content   : {
+    body    : "This is a test",
+    subject : "Hello World",
+    author  : "Bob"
+  }
+});
+```
+
+You'll receive a helpful error when things fail to parse
+
+```
+Error: Expected <object> but Received <Bob> of type <string> at <object>.content.author
+```
+
 ## see also
 
 - [lib-schema](https://www.npmjs.org/package/lib-schema)
