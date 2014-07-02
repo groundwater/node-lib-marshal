@@ -12,7 +12,7 @@ test("min string", function (t) {
   });
   t.throws(function(){
     type.marshal('a');
-  }, new Error('Value <a> must be at least 2 characters at <object>'));
+  }, new Error('Value <a> must be at least 2 characters at <var>'));
   t.equal(type.marshal('aa') ,'aa')
   t.end();
 });
@@ -23,7 +23,7 @@ test("max string", function (t) {
   });
   t.throws(function(){
     type.marshal('aaa');
-  }, new Error('Value <aaa> must be at most 1 characters at <object>'));
+  }, new Error('Value <aaa> must be at most 1 characters at <var>'));
   t.equal(type.marshal(' ') ,' ')
   t.end();
 });
@@ -34,7 +34,7 @@ test("match string", function(t) {
   });
   t.throws(function(){
     type.marshal('abc');
-  }, new Error('Value <abc> must be match the pattern </d+/> at <object>'));
+  }, new Error('Value <abc> must be match the pattern </d+/> at <var>'));
   t.equal(type.marshal('ddd') ,'ddd')
   t.end();
 });
@@ -47,7 +47,7 @@ test("callback string", function(t) {
   });
   t.throws(function(){
     type.marshal('bye');
-  }, new Error('Value <bye> must be pass validation function <isHi> at <object>'));
+  }, new Error('Value <bye> must be pass validation function <isHi> at <var>'));
   t.equal(type.marshal('hi') ,'hi')
   t.end();
 });
@@ -57,6 +57,6 @@ test("example match", function(t){
 
   t.throws(function(){
     str.marshal('bob AT aol.com')
-  }, new Error('Value <bob AT aol.com> must be match the pattern </.@.\\../> at <object>'))
+  }, new Error('Value <bob AT aol.com> must be match the pattern </.@.\\../> at <var>'))
   t.end()
 })

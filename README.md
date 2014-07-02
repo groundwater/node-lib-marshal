@@ -60,10 +60,10 @@ var message = messageProto.marshal(JSON.parse(str))
 var num = new NumberType({max: 10, min: 0})
 
 num.marshal(-1)
-// Error: Value <-1> must be greater than 0 at <object>
+// Error: Value <-1> must be greater than 0 at <var>
 
 num.marshal(20)
-// Error: Value <20> must be less than 10 at <object>
+// Error: Value <20> must be less than 10 at <var>
 ```
 
 ### strings
@@ -72,7 +72,7 @@ num.marshal(20)
 var str = new StringType({min: 1, max: 20, match: /.@.\../})
 
 str.marshal('bob AT aol.com')
-// Error: Value <bob AT aol.com> must be match the pattern </.@.\../> at <object>
+// Error: Value <bob AT aol.com> must be match the pattern </.@.\../> at <var>
 ```
 
 ## errors
@@ -115,7 +115,7 @@ message.marshal({
 You'll receive a helpful error when things fail to parse
 
 ```
-Error: Expected <object> but Received <Bob> of type <string> at <object>.content.author
+Error: Expected <object> but Received "Bob" of type <string> at <var>.content.author
 ```
 
 ## see also

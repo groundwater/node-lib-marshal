@@ -13,12 +13,26 @@ module.exports = {
   Nullable   : Nullable
 };
 
+function TypeOf(val){
+  var type
+  if (Array.isArray(val))
+    type = 'array'
+  else type = typeof val
+
+  return type
+}
+
 function MarshalError(expected, received, path) {
-  var message = fmt("Expected <%s> but Received <%s> of type <%s> at %s",
+  try {
+    var rec = JSON.stringify(received)
+  }catch(e){
+    var rec = "???"
+  }
+  var message = fmt("Expected <%s> but Received %s of type <%s> at %s",
     expected,
-    received,
-    typeof received,
-    ['<object>'].concat(path).join('.')
+    rec,
+    TypeOf(received),
+    ['<var>'].concat(path).join('.')
   );
   var error   = new Error(message);
 
@@ -29,11 +43,24 @@ function MarshalError(expected, received, path) {
   return error;
 }
 
+function RequiredError(key, path) {
+  var message = fmt("Required Property <%s> Missing at %s",
+    key,
+    ['<var>'].concat(path).join('.')
+  );
+  var error   = new Error(message);
+
+  error.key   = key;
+  error.path  = path;
+
+  return error;
+}
+
 function ConstraintError(received, constraint, path) {
   var message = fmt("Value <%s> must be %s at %s",
     received,
     constraint,
-    ['<object>'].concat(path).join('.')
+    ['<var>'].concat(path).join('.')
   );
   var error   = new Error(message);
 
@@ -119,8 +146,9 @@ ArrayType.prototype.marshal = function (val, _, path) {
   var type = this.type;
   var out = [];
 
+  var i = 0
   val.forEach(function (item) {
-    out.push(type.marshal(item));
+    out.push(type.marshal(item, _, path.concat('['+ i++ +']')));
   });
 
   return out;
@@ -184,6 +212,8 @@ StructType.prototype.marshal = function (val, stack, path) {
 
   var out = new this.type();
   Object.keys(this.required).forEach(function (key) {
+    if (val[key] === undefined) throw RequiredError(key, path);
+
     out[key] = this.required[key].marshal(val[key], stack, path.concat(key));
   }, this);
 

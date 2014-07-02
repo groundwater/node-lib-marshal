@@ -14,7 +14,7 @@ test("number type pasring a string", function (t) {
   type = new NumberType();
   t.throws(function () {
     type.marshal('asdf');
-  }, new Error('Expected <number> but Received <asdf> of type <string> at <object>'), 'throws exception');
+  }, new Error('Expected <number> but Received "asdf" of type <string> at <var>'), 'throws exception');
   t.end();
 });
 
@@ -22,7 +22,7 @@ test("string type pasring a number", function (t) {
   type = new StringType();
   t.throws(function () {
     type.marshal(1234);
-  }, new Error('Expected <String> but Received <1234> of type <number> at <object>'), 'throws exception');
+  }, new Error('Expected <String> but Received 1234 of type <number> at <var>'), 'throws exception');
   t.end();
 });
 
@@ -30,7 +30,7 @@ test("array[string] type pasring a string", function (t) {
   type = new ArrayType(new StringType);
   t.throws(function () {
     type.marshal('hello');
-  }, new Error('Expected <Array> but Received <hello> of type <string> at <object>'), 'throws exception');
+  }, new Error('Expected <Array> but Received "hello" of type <string> at <var>'), 'throws exception');
   t.end();
 });
 
@@ -40,7 +40,7 @@ test("errors should reveal paths", function (t) {
 
   t.throws(function () {
     type.marshal({a: {a: { b: '', a: 223}}});
-  }, new Error('Expected <object> but Received <223> of type <number> at <object>.a.a.a'), 'throws exception');
+  }, new Error('Expected <object> but Received 223 of type <number> at <var>.a.a.a'), 'throws exception');
   t.end();
 });
 
@@ -52,7 +52,7 @@ test("errors should reveal paths (test 2)", function (t) {
 
   t.throws(function () {
     type.marshal({self: {n: 123, self: "HELLO"}});
-  }, new Error('Expected <object> but Received <HELLO> of type <string> at <object>.self.self'), 'throws exception');
+  }, new Error('Expected <object> but Received "HELLO" of type <string> at <var>.self.self'), 'throws exception');
   t.end();
 });
 
@@ -88,6 +88,42 @@ test("errors should reveal paths (test 3)", function (t) {
         author  : "Bob"
       }
     });
-  }, new Error('Expected <object> but Received <Bob> of type <string> at <object>.content.author'), 'throws exception');
+  }, new Error('Expected <object> but Received "Bob" of type <string> at <var>.content.author'), 'throws exception');
+  t.end();
+});
+
+test("errors path should traverse arrays properly", function (t) {
+  type = new StructType;
+  type.add('self', new ArrayType(type));
+
+  t.throws(function () {
+    type.marshal({self: [{self: []}, {}, 1]});
+  }, new Error('Expected <object> but Received 1 of type <number> at <var>.self.[2]'),
+    'throws exception');
+  t.end();
+});
+
+test("arrays in errors should be identified as such", function (t) {
+  type = new StructType;
+  type.add('self', new ArrayType(type));
+
+  t.throws(function () {
+    type.marshal({self: [[]]});
+  }, new Error('Expected <object> but Received [] of type <array> at <var>.self.[0]'),
+    'throws exception');
+  t.end();
+});
+
+test("circular object errors appear as ???", function (t) {
+  type = new StructType;
+  type.add('self', new ArrayType(type));
+
+  var s = {}
+  s.self = s
+
+  t.throws(function () {
+    type.marshal(s);
+  }, new Error('Expected <Array> but Received ??? of type <object> at <var>.self'),
+    'throws exception');
   t.end();
 });
