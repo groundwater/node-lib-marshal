@@ -10,7 +10,8 @@ module.exports = {
   ArrayType  : ArrayType,
   MapType    : MapType,
   StructType : StructType,
-  Nullable   : Nullable
+  Nullable   : Nullable,
+  JsonType   : JsonType
 };
 
 function TypeOf(val){
@@ -69,6 +70,12 @@ function ConstraintError(received, constraint, path) {
   error.constraint = constraint;
 
   return error;
+}
+
+function JsonType(type) {}
+
+JsonType.prototype.marshal = function (val, _, path) {
+  return val
 }
 
 function Nullable(type) {

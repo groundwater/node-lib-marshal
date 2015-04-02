@@ -75,6 +75,15 @@ str.marshal('bob AT aol.com')
 // Error: Value <bob AT aol.com> must be match the pattern </.@.\../> at <var>
 ```
 
+### untyped (json)
+
+If you're not ready for a schema yet, you can allow arbitrary data with the `JsonType` type
+
+```js
+var type = new JsonType()
+var json = type.marshal({one: 1, two: 'two'})
+```
+
 ## errors
 
 Handy dandy error messages
